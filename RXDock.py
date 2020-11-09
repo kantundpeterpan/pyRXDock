@@ -25,7 +25,7 @@ class RXDock():
         ligand_file : str
             Path to SDF file containing ligands to dock
         receptor_prm : str
-            Path to receptor Paramters
+            Path to receptor Parameters
         output_suffix : str, optional
             Resulting sdf files will be append with this suffix.
             The default is '_out'.
