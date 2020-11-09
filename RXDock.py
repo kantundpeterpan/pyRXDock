@@ -9,6 +9,13 @@ import shlex
 import re
 from functools import partial
 
+RDKIT = False
+try:
+    from rdkit.Chem import PandasTools as pt
+    RDKIT = True
+except:
+    pass
+
 
 # In[52]:
 
@@ -91,7 +98,13 @@ class RXDock():
         splits : list[str]
             Paths to splitted SDF files (./{dir_prefix}/{split_prefix}*.sd)
 
-        """        
+        """
+        
+        if RDKIT:
+            df = pt.LoadSDF(ligand_file, removeHs=False)
+            pt.WriteSDF(df, ligand_file, idName = 'RowID',
+                        properties=df.columns)
+        
         if not os.path.exists(dir_prefix):
             os.mkdir(dir_prefix)
             
