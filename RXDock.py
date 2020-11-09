@@ -8,6 +8,7 @@ from glob import glob
 import shlex
 import re
 from functools import partial
+import sys
 
 RDKIT = False
 try:
@@ -24,6 +25,7 @@ class RXDock():
     @classmethod
     def rbdock(cls, ligand_file, receptor_prm, 
                   output_suffix = '_out', dock_prm = 'dock.prm',
+                  logfile = True,
                   **kwargs):
         """
 
@@ -50,6 +52,11 @@ class RXDock():
             Absolute path to the sdf file with docked ligands.
 
         """
+        
+        if logfile:
+            stdout = open(ligand_file.replace('.sd', '.log'), 'wb')
+        else:
+            stdout = sys.stdout
     
         run(
             shlex.split(
@@ -61,7 +68,9 @@ class RXDock():
                         dock_prm,
                         ' '.join(['-%s %s' % (k,v) for k,v in kwargs.items()])
                         )
-                )
+                ),
+            stdout=stdout,
+            stderr=stdout
         )
         
         return os.path.abspath(
@@ -145,6 +154,7 @@ class RXDock():
                   n_splits = 30,
                   output_suffix = '_out',
                   dock_prm = 'dock.prm',
+                  logfile = True,
                   **kwargs):
         
         splitted = cls.sdsplit(ligands,
@@ -157,6 +167,7 @@ class RXDock():
                              output_suffix=output_suffix,
                              dock_prm=dock_prm,
                              n_jobs = kwargs.pop('n_jobs', 2),
+                             logfile = logfile,
                              **kwargs)
         
         return res
